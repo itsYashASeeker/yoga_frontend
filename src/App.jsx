@@ -3,6 +3,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import moment from 'moment';
 import CheckboxImage from "./assets/checkbox.png"
+import axios from 'axios';
+import { API_ENDPOINT } from './constants';
 
 
 export default function App() {
@@ -38,11 +40,21 @@ export default function App() {
     onSubmit: async (values) => {
       setLoading(true);
       setSuccess(false);
+      values.batch_id = Number(values.batch_id);
+      try {
+        const response = await axios.post(`${API_ENDPOINT}/enroll`, values);
 
-
-      setSuccess(true);
-      setLoading(false);
-
+        if (response.status === 200) {
+          setSuccess(true);
+        } else {
+          window.alert(response?.data?.error);
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        window.alert('Error submitting form: ' + error.response?.data?.error || 'An unknown error occurred');
+      } finally {
+        setLoading(false);
+      }
     },
   });
 
@@ -68,7 +80,7 @@ export default function App() {
                 className="w-full p-2 border border-gray-300 rounded"
               />
               {formik.touched.name && formik.errors.name ? (
-                <div className="text-red-500">{formik.errors.name}</div>
+                <div className="text-sm text-red-500">{formik.errors.name}</div>
               ) : null}
             </div>
 
@@ -83,7 +95,7 @@ export default function App() {
                 className="w-full p-2 border border-gray-300 rounded"
               />
               {formik.touched.date_of_birth && formik.errors.date_of_birth ? (
-                <div className="text-red-500">{formik.errors.date_of_birth}</div>
+                <div className="text-sm text-red-500">{formik.errors.date_of_birth}</div>
               ) : null}
             </div>
 
@@ -98,7 +110,7 @@ export default function App() {
                 className="w-full p-2 border border-gray-300 rounded"
               />
               {formik.touched.contact_number && formik.errors.contact_number ? (
-                <div className="text-red-500">{formik.errors.contact_number}</div>
+                <div className="text-sm text-red-500">{formik.errors.contact_number}</div>
               ) : null}
             </div>
 
@@ -113,7 +125,7 @@ export default function App() {
                 className="w-full p-2 border border-gray-300 rounded"
               />
               {formik.touched.email && formik.errors.email ? (
-                <div className="text-red-500">{formik.errors.email}</div>
+                <div className="text-sm text-red-500">{formik.errors.email}</div>
               ) : null}
             </div>
 
@@ -127,13 +139,13 @@ export default function App() {
                 className="w-full p-2 border border-gray-300 rounded"
               >
                 <option value="">Select a Batch</option>
-                <option value="6-7AM">6-7AM</option>
-                <option value="7-8AM">7-8AM</option>
-                <option value="8-9AM">8-9AM</option>
-                <option value="5-6PM">5-6PM</option>
+                <option value="1">6-7AM</option>
+                <option value="2">7-8AM</option>
+                <option value="3">8-9AM</option>
+                <option value="4">5-6PM</option>
               </select>
               {formik.touched.batch_id && formik.errors.batch_id ? (
-                <div className="text-red-500">{formik.errors.batch_id}</div>
+                <div className="text-sm text-red-500">{formik.errors.batch_id}</div>
               ) : null}
             </div>
 
@@ -148,7 +160,7 @@ export default function App() {
                 className="w-full p-2 border border-gray-300 rounded"
               />
               {formik.touched.month && formik.errors.month ? (
-                <div className="text-red-500">{formik.errors.month}</div>
+                <div className="text-sm text-red-500">{formik.errors.month}</div>
               ) : null}
             </div>
 
@@ -161,7 +173,7 @@ export default function App() {
               >
                 Enroll Now
                 {loading ?
-                  <svg width={25} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="5" transform-origin="center" d="m148 84.7 13.8-8-10-17.3-13.8 8a50 50 0 0 0-27.4-15.9v-16h-20v16A50 50 0 0 0 63 67.4l-13.8-8-10 17.3 13.8 8a50 50 0 0 0 0 31.7l-13.8 8 10 17.3 13.8-8a50 50 0 0 0 27.5 15.9v16h20v-16a50 50 0 0 0 27.4-15.9l13.8 8 10-17.3-13.8-8a50 50 0 0 0 0-31.7Zm-47.5 50.8a35 35 0 1 1 0-70 35 35 0 0 1 0 70Z"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="0;120" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></path></svg>
+                  <svg width={25} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a12" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".3" stop-color="#FFFFFF" stop-opacity=".9"></stop><stop offset=".6" stop-color="#FFFFFF" stop-opacity=".6"></stop><stop offset=".8" stop-color="#FFFFFF" stop-opacity=".3"></stop><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a12)" stroke-width="15" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" cx="100" cy="100" r="70"></circle></svg>
                   : <></>
                 }
 
